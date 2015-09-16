@@ -5,10 +5,9 @@ class ProjectsController < ApplicationController
 
   attr_reader :project
 
-  before_action except: [:index, :new, :create] do
+  before_action only: [:show, :edit, :update, :deploy_group_versions] do
     find_project(params[:id])
   end
-  before_action :authorize_admin!, only: [:new, :create, :destroy]
   before_action :authorize_project_admin!, except: [:show, :index, :deploy_group_versions]
   before_action :get_environments, only: [:new, :create]
 

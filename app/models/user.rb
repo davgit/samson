@@ -71,6 +71,14 @@ class User < ActiveRecord::Base
     user_project_roles.find_by(project: project)
   end
 
+  def has_role?(project, role)
+    user_project_roles.where(project: project, role_id: role.role_id).any?
+  end
+
+  def has_any_role_for?(project)
+    user_project_roles.where(project: project).any?
+  end
+
   private
 
   def set_token
