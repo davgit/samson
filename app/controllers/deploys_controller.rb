@@ -2,7 +2,6 @@ class DeploysController < ApplicationController
   include CurrentProject
   include ProjectLevelAuthorization
 
-
   before_action except: [:active, :active_count, :recent, :changeset] do
     find_project(params[:project_id])
   end
