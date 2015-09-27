@@ -71,12 +71,18 @@ class User < ActiveRecord::Base
     user_project_roles.find_by(project: project)
   end
 
-  def has_role?(project, role)
-    user_project_roles.where(project: project, role_id: role.role_id).any?
+  def self.search_by_criteria(criteria)
+    scope = User
+    scope = scope.search(criteria[:search]) if criteria[:search]
+    scope.order("#{sort_column(criteria[:sort])} #{sort_direction(criteria[:direction])}").page(criteria[:page])
   end
 
-  def has_any_role_for?(project)
-    user_project_roles.where(project: project).any?
+  def self.sort_column(column)
+    column_names.include?(column) ? column : "created_at"
+  end
+
+  def self.sort_direction(direction)
+    %w[asc desc].include?(direction) ? direction : "asc"
   end
 
   private
