@@ -9,7 +9,7 @@ class ProjectRolesController < ApplicationController
   before_action :authorize_project_admin!, only: [:create, :update]
 
   def index
-    render json: ProjectRole.all.map { |role| { id: role.id, display_name: role.display_name } }, root: false
+    render json: ProjectRole.all.map { |role| {id: role.id, display_name: role.display_name} }, root: false
   end
 
   def create
@@ -20,7 +20,7 @@ class ProjectRolesController < ApplicationController
       Rails.logger.info("#{current_user.name_and_email} granted the role of #{project_role_name} to #{user.name} on project #{current_project.name}")
       render status: :created, json: {project_role: new_role}
     else
-      render status: :bad_request, json: { errors: new_role.errors.full_messages }
+      render status: :bad_request, json: {errors: new_role.errors.full_messages}
     end
   end
 
@@ -32,7 +32,7 @@ class ProjectRolesController < ApplicationController
       Rails.logger.info("#{current_user.name_and_email} granted the role of #{project_role_name} to #{user.name} on project #{current_project.name}")
       render status: :ok, json: {project_role: project_role}
     else
-      render status: :bad_request, json: { errors: project_role.errors.full_messages }
+      render status: :bad_request, json: {errors: project_role.errors.full_messages}
     end
   end
 

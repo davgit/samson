@@ -15,7 +15,7 @@ samson.controller('ProjectRolesCtrl', function($scope, $element, $filter, projec
 
   $scope.$watch('project_role.role_id', function(new_role_value, old_role_value) {
     if (new_role_value !== old_role_value) {
-      if (exists($scope.project_role)) {
+      if ($scope.project_role.id != null) {
         return updateProjectRole($scope.project_role, new_role_value);
       }
       else {
@@ -30,10 +30,6 @@ samson.controller('ProjectRolesCtrl', function($scope, $element, $filter, projec
         $scope.roles = response.data;
       }
     );
-  }
-
-  function exists(project_role) {
-    return project_role.id;
   }
 
   function createProjectRole(project_role) {
