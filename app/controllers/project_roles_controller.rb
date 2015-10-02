@@ -18,7 +18,7 @@ class ProjectRolesController < ApplicationController
     if new_role.persisted?
       user = User.find(create_params[:user_id])
       Rails.logger.info("#{current_user.name_and_email} granted the role of #{project_role_name} to #{user.name} on project #{current_project.name}")
-      render status: :created, json: {project_role: new_role}
+      render status: :created, json: new_role
     else
       render status: :bad_request, json: {errors: new_role.errors.full_messages}
     end
@@ -30,7 +30,7 @@ class ProjectRolesController < ApplicationController
     if project_role.errors.empty?
       user = User.find(project_role.user_id)
       Rails.logger.info("#{current_user.name_and_email} granted the role of #{project_role_name} to #{user.name} on project #{current_project.name}")
-      render status: :ok, json: {project_role: project_role}
+      render status: :ok, json: project_role
     else
       render status: :bad_request, json: {errors: project_role.errors.full_messages}
     end
