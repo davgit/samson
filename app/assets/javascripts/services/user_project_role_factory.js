@@ -18,7 +18,8 @@ samson.factory('userProjectRoleFactory', function() {
   };
 
   UserProjectRole.prototype.exists = function() {
-    return this.id != null;
+    //If id contains a valid number, this role has already been created in the database
+    return _.isNumber(this.id);
   };
 
   UserProjectRole.prototype.buildCreatePayload = function() {
@@ -47,7 +48,7 @@ samson.factory('userProjectRoleFactory', function() {
   };
 
   function toInteger(value) {
-    return value != null && value.length ? parseInt(value) : undefined;
+    return _.isString(value) && value.length ? parseInt(value) : undefined;
   }
 
   return UserProjectRole;
