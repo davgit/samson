@@ -1,15 +1,11 @@
 class NewRelicController < ApplicationController
-  include CurrentProject
   include ProjectLevelAuthorization
-
-  before_action do
-    find_project(params[:project_id])
-  end
 
   before_action :authorize_project_deployer!
   before_action :ensure_new_reclic_api_key
 
   def show
+    @project = current_project
     applications = stage.new_relic_applications.map(&:name)
     render json: NewRelic.metrics(applications, initial?)
   end

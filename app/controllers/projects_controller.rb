@@ -1,13 +1,9 @@
 class ProjectsController < ApplicationController
-  include CurrentProject
   include ProjectLevelAuthorization
   include StagePermittedParams
 
   attr_reader :project
   
-  before_action except: [:index, :new, :create] do
-    find_project(params[:id])
-  end
   before_action :authorize_admin!, only: [:new, :create, :destroy]
   before_action :authorize_project_admin!, except: [:show, :index, :deploy_group_versions]
   before_action :get_environments, only: [:new, :create]
@@ -54,6 +50,7 @@ class ProjectsController < ApplicationController
   end
 
   def edit
+    @project = current_project
   end
 
   def update
@@ -73,6 +70,7 @@ class ProjectsController < ApplicationController
   end
 
   def deploy_group_versions
+    @project = current_project
     before = params[:before] ? Time.parse(params[:before]) : Time.now
     deploy_group_versions = project.last_deploy_by_group(before).each_with_object({}) do |(id, deploy), hash|
       hash[id] = deploy.as_json(methods: :url)
@@ -98,6 +96,10 @@ class ProjectsController < ApplicationController
     )
   end
 
+  def project
+    current_project
+  end
+
   def projects_for_user
     if current_user.starred_projects.any?
       current_user.starred_projects
@@ -108,5 +110,9 @@ class ProjectsController < ApplicationController
 
   def get_environments
     @environments = Environment.all
+  end
+
+  def current_project
+    @project ||= (Project.find_by_param!(params[:id]) if params.try(:[], :id))
   end
 end

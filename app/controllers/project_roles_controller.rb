@@ -1,10 +1,5 @@
 class ProjectRolesController < ApplicationController
-  include CurrentProject
   include ProjectLevelAuthorization
-
-  before_action only: [:create, :update] do
-    find_project(params[:project_id])
-  end
 
   before_action :authorize_project_admin!, only: [:create, :update]
 

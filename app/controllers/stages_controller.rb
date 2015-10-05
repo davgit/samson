@@ -1,15 +1,10 @@
 require 'open-uri' # needed to fetch from img.shields.io using open()
 
 class StagesController < ApplicationController
-  include CurrentProject
   include ProjectLevelAuthorization
   include StagePermittedParams
 
   skip_before_action :login_users, if: :badge?
-
-  before_action do
-    find_project(params[:project_id])
-  end
 
   before_action :authorize_project_deployer!, unless: :badge?
   before_action :authorize_project_admin!, except: [:index, :show]
@@ -18,6 +13,7 @@ class StagesController < ApplicationController
   before_action :get_environments, only: [:new, :create, :edit, :update, :clone]
 
   def index
+    @project = current_project
     @stages = @project.stages
 
     respond_to do |format|
@@ -29,6 +25,7 @@ class StagesController < ApplicationController
   end
 
   def show
+    @project = current_project
     respond_to do |format|
       format.html do
         @deploys = @stage.deploys.page(params[:page])
@@ -50,12 +47,14 @@ class StagesController < ApplicationController
   end
 
   def new
+    @project = current_project
     @stage = @project.stages.build(command_ids: Command.global.pluck(:id))
     @stage.new_relic_applications.build
   end
 
   def create
     # Need to ensure project is already associated
+    @project = current_project
     @stage = @project.stages.build
     @stage.attributes = stage_params
 
@@ -71,10 +70,12 @@ class StagesController < ApplicationController
   end
 
   def edit
+    @project = current_project
     @stage.new_relic_applications.build
   end
 
   def update
+    @project = current_project
     if @stage.update_attributes(stage_params)
       redirect_to [@project, @stage]
     else
@@ -87,17 +88,20 @@ class StagesController < ApplicationController
   end
 
   def destroy
+    @project = current_project
     @stage.soft_delete!
     redirect_to @project
   end
 
   def reorder
+    @project = current_project
     Stage.reorder(params[:stage_id])
 
     head :ok
   end
 
   def clone
+    @project = current_project
     @stage = Stage.build_clone(@stage)
     render :new
   end
@@ -125,7 +129,7 @@ class StagesController < ApplicationController
   end
 
   def find_stage
-    @stage = @project.stages.find_by_param!(params[:id])
+    @stage = current_project.stages.find_by_param!(params[:id])
   end
 
   def get_environments

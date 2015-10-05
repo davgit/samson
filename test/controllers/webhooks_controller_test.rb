@@ -29,17 +29,20 @@ describe WebhooksController do
           assert_redirected_to project_webhooks_path(project)
         end
       end
+    end
 
-      describe 'handles stage deletion' do
-        setup do
-          stage.soft_delete!
-          project.reload
-        end
+    describe 'GET :index after deleting stage associated to webhook' do
+      let(:params) { { branch: "master", stage_id: stage.id, source: 'any' } }
 
-        it "renders :index" do
-          get :index, project_id: project.to_param
-          assert_template :index
-        end
+      setup do
+        project.webhooks.create!(params)
+        stage.soft_delete!
+        project.reload
+      end
+
+      it 'renders :index template' do
+        get :index, project_id: project.to_param
+        assert_template :index
       end
     end
   end
@@ -63,20 +66,21 @@ describe WebhooksController do
           assert_redirected_to project_webhooks_path(project)
         end
       end
+    end
 
-      describe 'handles stage deletion' do
-        setup do
-          stage.soft_delete!
-          project.reload
-        end
+    describe 'GET :index after deleting stage associated to webhook' do
+      let(:params) { { branch: "master", stage_id: stage.id, source: 'any' } }
 
-        it "renders :index" do
-          get :index, project_id: project.to_param
-          assert_template :index
-        end
+      setup do
+        project.webhooks.create!(params)
+        stage.soft_delete!
+        project.reload
+      end
+
+      it 'renders :index template' do
+        get :index, project_id: project.to_param
+        assert_template :index
       end
     end
   end
-
-
 end

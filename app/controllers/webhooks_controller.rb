@@ -1,31 +1,30 @@
 require 'samson/integration'
 
 class WebhooksController < ApplicationController
-  include CurrentProject
   include ProjectLevelAuthorization
-
-  before_action do
-    find_project(params[:project_id])
-  end
 
   before_action :authorize_project_deployer!
 
   def index
+    @project = current_project
     @webhooks = @project.webhooks
     @sources = Samson::Integration.sources
   end
 
   def new
+    @project = current_project
     @webhooks = @project.webhooks
   end
 
   def create
+    @project = current_project
     @project.webhooks.create!(webhook_params)
 
     redirect_to project_webhooks_path(@project)
   end
 
   def destroy
+    @project = current_project
     webhook = @project.webhooks.find(params[:id])
     webhook.soft_delete!
 
@@ -33,6 +32,7 @@ class WebhooksController < ApplicationController
   end
 
   def show
+    @project = current_project
     @webhook = @project.webhooks.find(params[:id])
   end
 

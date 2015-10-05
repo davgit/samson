@@ -1,14 +1,11 @@
 class LocksController < ApplicationController
   include ProjectLevelAuthorization
 
-  before_action unless: :for_global_lock? do
-    find_project
-    authorize_project_deployer!
-  end
-
+  before_action :authorize_project_deployer!, unless: :for_global_lock?
   before_action :authorize_admin!, if: :for_global_lock?
 
   def create
+    @project = current_project unless for_global_lock?
     attributes = params.require(:lock).
       permit(:description, :stage_id, :warning).
       merge(user: current_user)
@@ -17,6 +14,7 @@ class LocksController < ApplicationController
   end
 
   def destroy
+    @project = current_project unless for_global_lock?
     lock.try(:soft_delete)
     redirect_to :back, notice: 'Unlocked'
   end
@@ -38,7 +36,7 @@ class LocksController < ApplicationController
     @lock ||= Lock.find(params[:id])
   end
 
-  def find_project
+  def current_project
     case action_name
     when 'create' then
       @project = Stage.find(params[:lock][:stage_id]).project

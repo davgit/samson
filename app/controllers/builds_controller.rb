@@ -1,16 +1,12 @@
 class BuildsController < ApplicationController
-  include CurrentProject
   include ProjectLevelAuthorization
-
-  before_action do
-    find_project(params[:project_id])
-  end
 
   before_action :authorize_project_deployer!
 
   before_action :find_build, only: [:show, :build_docker_image, :edit, :update]
 
   def index
+    @project = current_project
     @builds = @project.builds.order('id desc').page(params[:page])
 
     respond_to do |format|
@@ -20,10 +16,12 @@ class BuildsController < ApplicationController
   end
 
   def new
+    @project = current_project
     @build = @project.builds.build
   end
 
   def create
+    @project = current_project
     @build = create_build
     @build.creator = current_user
     @build.save
@@ -46,12 +44,15 @@ class BuildsController < ApplicationController
   end
 
   def show
+    @project = current_project
   end
 
   def edit
+    @project = current_project
   end
 
   def update
+    @project = current_project
     success = @build.update_attributes(edit_build_params)
 
     respond_to do |format|
@@ -70,6 +71,7 @@ class BuildsController < ApplicationController
   end
 
   def build_docker_image
+    @project = current_project
     start_docker_build
 
     respond_to do |format|

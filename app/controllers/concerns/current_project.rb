@@ -6,12 +6,6 @@ module CurrentProject
   end
 
   def current_project
-    @project
-  end
-
-  protected
-
-  def find_project(param)
-    @project ||= Project.find_by_param!(param)
+    @project ||= (Project.find_by_param!(params[:project_id]) if params.try(:[], :project_id))
   end
 end

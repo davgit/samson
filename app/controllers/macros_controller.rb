@@ -1,23 +1,22 @@
 class MacrosController < ApplicationController
-  include CurrentProject
   include ProjectLevelAuthorization
 
-  before_action do
-    find_project(params[:project_id])
-  end
   before_action :authorize_project_deployer!
   before_action :authorize_project_admin!, only: [:new, :create, :edit, :update, :destroy]
   before_action :find_macro, only: [:edit, :update, :execute, :destroy]
 
   def index
+    @project = current_project
     @macros = @project.macros.page(params[:page])
   end
 
   def new
+    @project = current_project
     @macro = @project.macros.build
   end
 
   def create
+    @project = current_project
     @macro = @project.macros.build(macro_params)
 
     if @macro.save
@@ -28,9 +27,11 @@ class MacrosController < ApplicationController
   end
 
   def edit
+    @project = current_project
   end
 
   def update
+    @project = current_project
     if @macro.update_attributes(macro_params)
       redirect_to project_macros_path(@project)
     else
@@ -39,6 +40,7 @@ class MacrosController < ApplicationController
   end
 
   def execute
+    @project = current_project
     macro_service = MacroService.new(@project, current_user)
     job = macro_service.execute!(@macro)
 
@@ -51,6 +53,7 @@ class MacrosController < ApplicationController
   end
 
   def destroy
+    @project = current_project
     if @macro.user == current_user || current_user.is_super_admin?
       @macro.soft_delete!
       redirect_to project_macros_path(@project)
@@ -73,6 +76,6 @@ class MacrosController < ApplicationController
   end
 
   def find_macro
-    @macro = @project.macros.find(params[:id])
+    @macro = current_project.macros.find(params[:id])
   end
 end
