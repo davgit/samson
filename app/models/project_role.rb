@@ -4,9 +4,13 @@ class ProjectRole < ActiveHash::Base
   include ActiveHash::Enum
 
   self.data = [
-    { id: 0, name: "deployer", display_name: "Deployer" },
-    { id: 1, name: "admin", display_name: "Admin" }
+    { id: 0, name: "deployer" },
+    { id: 1, name: "admin" }
   ]
 
   enum_accessor :name
+
+  def display_name
+    name.humanize
+  end
 end

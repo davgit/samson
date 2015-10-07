@@ -57,25 +57,29 @@ describe("Controller: ProjectRolesCtrl", function() {
   describe("$watch('project_role.role_id')", function() {
 
     beforeEach(function() {
-      scope.project_role = userProjectRoleFactory.buildFromDom(element[0]);
+      scope.project_role = userProjectRoleFactory.build(element[0]);
       scope.roles = [
         projectRoleFactory.buildFromJson({id: 0, display_name: 'Deployer'}),
         projectRoleFactory.buildFromJson({id: 1, display_name: 'Admin'})
       ];
-      scope.$digest();
+      //scope.$digest();
     });
 
     it('should try to create a new project role when the role_id changes and id is undefined', inject(function($q, projectRolesService, messageCenterService) {
       var deferred = $q.defer();
       deferred.resolve();
       spyOn(projectRolesService, 'createProjectRole').and.returnValue(deferred.promise);
-
       spyOn(messageCenterService, 'add');
+      spyOn(messageCenterService, 'markShown');
+      spyOn(messageCenterService, 'removeShown');
 
       scope.project_role.role_id = 1;
+      scope.roleChanged();
       scope.$digest();
 
       expect(projectRolesService.createProjectRole).toHaveBeenCalledWith(scope.project_role);
+      expect(messageCenterService.markShown).toHaveBeenCalled();
+      expect(messageCenterService.removeShown).toHaveBeenCalled();
       expect(messageCenterService.add).toHaveBeenCalledWith('success', 'User Some user has been granted the role Admin for project Some project');
     }));
 
@@ -85,13 +89,17 @@ describe("Controller: ProjectRolesCtrl", function() {
       var deferred = $q.defer();
       deferred.resolve();
       spyOn(projectRolesService, 'updateProjectRole').and.returnValue(deferred.promise);
-
       spyOn(messageCenterService, 'add');
+      spyOn(messageCenterService, 'markShown');
+      spyOn(messageCenterService, 'removeShown');
 
       scope.project_role.role_id = 1;
+      scope.roleChanged();
       scope.$digest();
 
       expect(projectRolesService.updateProjectRole).toHaveBeenCalledWith(scope.project_role);
+      expect(messageCenterService.markShown).toHaveBeenCalled();
+      expect(messageCenterService.removeShown).toHaveBeenCalled();
       expect(messageCenterService.add).toHaveBeenCalledWith('success', 'User Some user has been granted the role Admin for project Some project');
     }));
 
@@ -99,13 +107,17 @@ describe("Controller: ProjectRolesCtrl", function() {
       var deferred = $q.defer();
       deferred.reject();
       spyOn(projectRolesService, 'createProjectRole').and.returnValue(deferred.promise);
-
       spyOn(messageCenterService, 'add');
+      spyOn(messageCenterService, 'markShown');
+      spyOn(messageCenterService, 'removeShown');
 
       scope.project_role.role_id = 1;
+      scope.roleChanged();
       scope.$digest();
 
       expect(projectRolesService.createProjectRole).toHaveBeenCalledWith(scope.project_role);
+      expect(messageCenterService.markShown).toHaveBeenCalled();
+      expect(messageCenterService.removeShown).toHaveBeenCalled();
       expect(messageCenterService.add).toHaveBeenCalledWith('danger', "Failed to assign role 'Admin' to User Some user on project Some project");
     }));
 
@@ -115,13 +127,17 @@ describe("Controller: ProjectRolesCtrl", function() {
       var deferred = $q.defer();
       deferred.reject();
       spyOn(projectRolesService, 'updateProjectRole').and.returnValue(deferred.promise);
-
       spyOn(messageCenterService, 'add');
+      spyOn(messageCenterService, 'markShown');
+      spyOn(messageCenterService, 'removeShown');
 
       scope.project_role.role_id = 1;
+      scope.roleChanged();
       scope.$digest();
 
       expect(projectRolesService.updateProjectRole).toHaveBeenCalledWith(scope.project_role);
+      expect(messageCenterService.markShown).toHaveBeenCalled();
+      expect(messageCenterService.removeShown).toHaveBeenCalled();
       expect(messageCenterService.add).toHaveBeenCalledWith('danger', "Failed to assign role 'Admin' to User Some user on project Some project");
     }));
   });

@@ -5,8 +5,10 @@ samson.service('projectRolesService', function($http, $q) {
   };
 
   this.createProjectRole = function(project_role) {
+    var payload = JSON.stringify(project_role, ['user_id', 'project_id', 'role_id']);
+
     var deferred = $q.defer();
-    $http.post('/projects/' + project_role.project_id + '/project_roles', project_role.buildCreatePayload()).then(
+    $http.post('/projects/' + project_role.project_id + '/project_roles', payload).then(
       function(response) {
         project_role.id = response.data.id;
         deferred.resolve();
@@ -19,9 +21,8 @@ samson.service('projectRolesService', function($http, $q) {
   };
 
   this.updateProjectRole = function(project_role) {
-    return $http.put('/projects/' + project_role.project_id + '/project_roles/' + project_role.id,
-      project_role.buildUpdatePayload()
-    );
+    var payload = JSON.stringify(project_role, ['role_id']);
+    return $http.put('/projects/' + project_role.project_id + '/project_roles/' + project_role.id, payload);
   };
 });
 

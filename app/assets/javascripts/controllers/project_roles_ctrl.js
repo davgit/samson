@@ -1,27 +1,24 @@
-samson.controller('ProjectRolesCtrl', function($scope, $element, $filter, userProjectRoleFactory, projectRoleFactory, projectRolesService, messageCenterService) {
+samson.controller('ProjectRolesCtrl', function($rootScope, $scope, $element, $filter, userProjectRoleFactory, projectRoleFactory, projectRolesService, messageCenterService) {
   $scope.project_role = {};
   $scope.roles = [];
 
   $scope.initModel = function() {
-    $scope.project_role = userProjectRoleFactory.buildFromDom($element[0]);
+    $scope.project_role = userProjectRoleFactory.build($element[0]);
     loadProjectRoles();
   };
 
-  $scope.$watch('project_role.role_id', function(new_role_value, old_role_value) {
-    if (new_role_value !== old_role_value) {
-      if ($scope.project_role.exists()) {
-        return updateProjectRole($scope.project_role, new_role_value);
-      }
-      else {
-        return createProjectRole($scope.project_role, new_role_value);
-      }
+  $scope.roleChanged = function() {
+    if ($scope.project_role.exists()) {
+      return updateProjectRole($scope.project_role);
     }
-  });
+    else {
+      return createProjectRole($scope.project_role);
+    }
+  };
 
   function loadProjectRoles() {
-    projectRolesService.loadProjectRoles().then(
-      function(response) {
-        $scope.roles = response.data.map(function(item){
+    projectRolesService.loadProjectRoles().then(function(response) {
+        $scope.roles = response.data.map(function(item) {
           return projectRoleFactory.buildFromJson(item);
         });
       }
@@ -32,11 +29,11 @@ samson.controller('ProjectRolesCtrl', function($scope, $element, $filter, userPr
     projectRolesService.createProjectRole(project_role).then(
       function() {
         //Success
-        showSuccessMessage('User ' + project_role.user_name + ' has been granted the role ' + roleNameFor(project_role.role_id) + ' for project ' + project_role.project_name);
+        showSuccessMessage(project_role);
       },
       function() {
         //Failure
-        showErrorMessage("Failed to assign role '" + roleNameFor(project_role.role_id) + "' to User " + project_role.user_name + " on project " + project_role.project_name);
+        showErrorMessage(project_role);
       }
     );
   }
@@ -45,25 +42,31 @@ samson.controller('ProjectRolesCtrl', function($scope, $element, $filter, userPr
     projectRolesService.updateProjectRole(project_role).then(
       function() {
         //Success
-        showSuccessMessage('User ' + project_role.user_name + ' has been granted the role ' + roleNameFor(project_role.role_id) + ' for project ' + project_role.project_name);
+        showSuccessMessage(project_role);
       },
       function() {
         //Failure
-        showErrorMessage("Failed to assign role '" + roleNameFor(project_role.role_id) + "' to User " + project_role.user_name + " on project " + project_role.project_name);
+        showErrorMessage(project_role);
       }
     );
   }
 
   function roleNameFor(role_id) {
-    var filtered = $filter('filter')($scope.roles, {id: role_id});
-    return filtered ? filtered[0].display_name : '';
+    var role = _.findWhere($scope.roles, {id: role_id});
+    return _.isUndefined(role) ? '' :  role.display_name;
   }
 
-  function showSuccessMessage(message) {
-    messageCenterService.add('success', message);
+  function showSuccessMessage(project_role) {
+    showMessage('success', 'User ' + project_role.user_name + ' has been granted the role ' + roleNameFor(project_role.role_id) + ' for project ' + project_role.project_name);
   }
 
-  function showErrorMessage(message) {
-    messageCenterService.add('danger', message);
+  function showErrorMessage(project_role) {
+    showMessage('danger', "Failed to assign role '" + roleNameFor(project_role.role_id) + "' to User " + project_role.user_name + " on project " + project_role.project_name);
+  }
+
+  function showMessage(message_type, message) {
+    messageCenterService.markShown();
+    messageCenterService.removeShown();
+    messageCenterService.add(message_type, message);
   }
 });

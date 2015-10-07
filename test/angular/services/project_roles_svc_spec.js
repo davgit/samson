@@ -36,9 +36,10 @@ describe("Service: projectRolesService", function() {
     var user_id = 1;
     var project_id = 2;
     var role_id = 0;
+    var element = angular.element('<form data-id="" data-user-id="' + user_id + '" data-user-name="Some user" data-project-id="' + project_id + '" data-project-name="Some project" data-role-id="' + role_id  + '"></form>');
 
-    var project_role = userProjectRoleFactory.build(undefined, user_id, project_id, role_id);
-    var expected_post_data = project_role.buildCreatePayload();
+    var project_role = userProjectRoleFactory.build(element[0]);
+    var expected_post_data = JSON.stringify(project_role, ['user_id', 'project_id', 'role_id']);
     var expected_response = {id: 0, user_id: user_id, project_id: project_id, role_id: role_id};
 
     httpBackend.expectPOST('/projects/' + project_role.project_id + '/project_roles', expected_post_data)
@@ -57,9 +58,10 @@ describe("Service: projectRolesService", function() {
     var user_id = 1;
     var project_id = 2;
     var role_id = 0;
+    var element = angular.element('<form data-id="' + id + '" data-user-id="' + user_id + '" data-user-name="Some user" data-project-id="' + project_id + '" data-project-name="Some project" data-role-id="' + role_id  + '"></form>');
 
-    var project_role = userProjectRoleFactory.build(id, user_id, project_id, role_id);
-    var post_data = project_role.buildUpdatePayload();
+    var project_role = userProjectRoleFactory.build(element[0]);
+    var post_data = JSON.stringify(project_role, ['role_id']);
     var expected_response = {id: id, user_id: user_id, project_id: project_id, role_id: role_id};
 
     httpBackend.expectPUT('/projects/' + project_role.project_id + '/project_roles/' + project_role.id, post_data)
