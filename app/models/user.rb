@@ -78,11 +78,11 @@ class User < ActiveRecord::Base
   end
 
   def self.sort_column(column)
-    column_names.include?(column) ? column : "created_at"
+    column.presence || "created_at"
   end
 
   def self.sort_direction(direction)
-    %w[asc desc].include?(direction) ? direction : "asc"
+    direction.presence || "asc"
   end
 
   private
