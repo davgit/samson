@@ -19,7 +19,7 @@ describe ReferencesController do
         end
       end
 
-      as_a_viewer_project_deployer do
+      as_a_project_deployer do
 
         it 'returns the git references for the project test' do
           get :index, project_id: projects(:test).to_param, format: :json

@@ -112,7 +112,7 @@ describe BuildsController do
     end
   end
 
-  as_a_viewer_project_deployer do
+  as_a_project_deployer do
     describe '#index' do
       it 'works with no builds' do
         get :index, project_id: project.to_param

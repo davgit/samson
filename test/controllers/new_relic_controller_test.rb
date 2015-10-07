@@ -65,7 +65,7 @@ describe NewRelicController do
     end
   end
 
-  as_a_viewer_project_deployer do
+  as_a_project_deployer do
     it "requires a project" do
       assert_raises(ActiveRecord::RecordNotFound) do
         get :show, project_id: 123123, id: 123123

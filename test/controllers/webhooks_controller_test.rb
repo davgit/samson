@@ -44,7 +44,7 @@ describe WebhooksController do
     end
   end
 
-  as_a_viewer_project_deployer do
+  as_a_project_deployer do
     describe 'GET :index' do
       it 'renders :index template' do
         get :index, project_id: project.to_param

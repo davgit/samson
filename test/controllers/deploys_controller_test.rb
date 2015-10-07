@@ -300,8 +300,8 @@ describe DeploysController do
     end
   end
 
-  as_a_viewer_project_deployer do
-    let(:deployer) { users(:viewer_project_deployer) }
+  as_a_project_deployer do
+    let(:deployer) { users(:project_deployer) }
 
     setup do
       DeployService.stubs(:new).with(deployer).returns(deploy_service)

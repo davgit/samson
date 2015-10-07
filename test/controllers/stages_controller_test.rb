@@ -294,7 +294,7 @@ describe StagesController do
     end
   end
 
-  as_a_viewer_project_deployer do
+  as_a_project_deployer do
     describe 'GET to :show' do
       describe 'valid' do
         before do
@@ -340,7 +340,7 @@ describe StagesController do
     unauthorized :get, :clone, project_id: :foo, id: 1
   end
 
-  as_a_deployer_project_admin do
+  as_a_project_admin do
     describe 'GET to #new' do
       describe 'valid' do
         before { get :new, project_id: subject.project.to_param }

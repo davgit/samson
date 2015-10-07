@@ -99,7 +99,7 @@ describe LocksController do
     end
   end
 
-  as_a_viewer_project_deployer do
+  as_a_project_deployer do
     unauthorized :post, :create
 
     it("responds with unauthorized when doing a post to create a global lock") { post :create, id: global_lock.id }

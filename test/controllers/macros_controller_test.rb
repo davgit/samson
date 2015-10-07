@@ -200,8 +200,8 @@ describe MacrosController do
     end
   end
 
-  as_a_viewer_project_deployer do
-    let(:deployer) { users(:viewer_project_deployer) }
+  as_a_project_deployer do
+    let(:deployer) { users(:project_deployer) }
 
     describe "a GET to :index" do
       setup { get :index, project_id: project.to_param }
@@ -241,8 +241,8 @@ describe MacrosController do
     unauthorized :delete, :destroy, project_id: :foo, id: 1
   end
 
-  as_a_deployer_project_admin do
-    let(:deployer) { users(:deployer_project_admin) }
+  as_a_project_admin do
+    let(:deployer) { users(:project_admin) }
 
     describe 'a GET to #new' do
       setup { get :new, project_id: project.to_param }
@@ -331,7 +331,7 @@ describe MacrosController do
     describe 'a DELETE to #destroy' do
       describe 'with the macro creator being project admin' do
         setup do
-          macro.update_attributes!(user: users(:deployer_project_admin))
+          macro.update_attributes!(user: users(:project_admin))
           delete :destroy, project_id: project.to_param, id: macro.id
         end
 

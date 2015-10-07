@@ -50,7 +50,7 @@ describe ReleasesController do
     end
   end
 
-  as_a_viewer_project_deployer do
+  as_a_project_deployer do
     describe "#create" do
       let(:release_params) { { commit: "abcd" } }
       before { GITHUB.stubs(:create_release) }
