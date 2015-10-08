@@ -133,11 +133,11 @@ class Project < ActiveRecord::Base
   end
 
   def self.sort_column(column)
-    column.presence || "created_at"
+    column_names.include?(column) ? column : 'created_at'
   end
 
   def self.sort_direction(direction)
-    direction.presence || "asc"
+    %w[asc desc].include?(direction) ? direction : 'asc'
   end
 
   private
