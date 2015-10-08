@@ -108,6 +108,7 @@ class ProjectsController < ApplicationController
     @environments = Environment.all
   end
 
+  # Overriding require_project from CurrentProject
   def require_project
     @project = (Project.find_by_param!(params[:id]) if params[:id])
   end
