@@ -6,34 +6,29 @@ class WebhooksController < ApplicationController
   before_action :authorize_project_deployer!
 
   def index
-    @project = current_project
-    @webhooks = @project.webhooks
+    @webhooks = current_project.webhooks
     @sources = Samson::Integration.sources
   end
 
   def new
-    @project = current_project
-    @webhooks = @project.webhooks
+    @webhooks = current_project.webhooks
   end
 
   def create
-    @project = current_project
-    @project.webhooks.create!(webhook_params)
+    current_project.webhooks.create!(webhook_params)
 
-    redirect_to project_webhooks_path(@project)
+    redirect_to project_webhooks_path(current_project)
   end
 
   def destroy
-    @project = current_project
-    webhook = @project.webhooks.find(params[:id])
+    webhook = current_project.webhooks.find(params[:id])
     webhook.soft_delete!
 
-    redirect_to project_webhooks_path(@project)
+    redirect_to project_webhooks_path(current_project)
   end
 
   def show
-    @project = current_project
-    @webhook = @project.webhooks.find(params[:id])
+    @webhook = current_project.webhooks.find(params[:id])
   end
 
   private
