@@ -26,7 +26,7 @@ class LocksController < ApplicationController
   def for_global_lock?
     case action_name
     when 'create' then
-      !params[:lock].try(:[], :stage_id) || !params[:lock].try(:[], :stage_id).presence
+      !params[:lock].try(:[], :stage_id) || !params[:lock][:stage_id].present?
     when 'destroy' then
       !lock.stage_id
     else
