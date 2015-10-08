@@ -107,18 +107,6 @@ describe JobsController do
         end
       end
     end
-
-    describe "a DELETE to :destroy" do
-      describe "with a valid job" do
-        setup do
-          delete :destroy, project_id: project.to_param, id: job
-        end
-
-        it "responds ok" do
-          response.status.must_equal(200)
-        end
-      end
-    end
   end
 
   as_a_project_admin do
