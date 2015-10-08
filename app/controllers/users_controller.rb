@@ -4,7 +4,6 @@ class UsersController < ApplicationController
   before_action :authorize_project_admin!
 
   def index
-    @project = current_project
     @users = User.search_by_criteria(params)
 
     respond_to do |format|

@@ -1,21 +1,20 @@
 class JobsController < ApplicationController
   include ProjectLevelAuthorization
 
+  skip_before_action :require_project, only: [:enabled]
+
   before_action :authorize_project_admin!, only: [:new, :create, :destroy]
   before_action :find_job, only: [:show, :destroy]
 
   def index
-    @project = current_project
     @jobs = @project.jobs.non_deploy.page(params[:page])
   end
 
   def new
-    @project = current_project
     @job = Job.new
   end
 
   def create
-    @project = current_project
     job_service = JobService.new(@project, current_user)
     command_ids = command_params[:ids].select(&:present?)
 
@@ -33,7 +32,6 @@ class JobsController < ApplicationController
   end
 
   def show
-    @project = current_project
     respond_to do |format|
       format.html
       format.text do
@@ -54,7 +52,6 @@ class JobsController < ApplicationController
   end
 
   def destroy
-    @project = current_project
     if @job.can_be_stopped_by?(current_user)
       @job.stop!
     else

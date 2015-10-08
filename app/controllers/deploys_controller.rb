@@ -1,14 +1,14 @@
 class DeploysController < ApplicationController
   include ProjectLevelAuthorization
 
-  before_action :authorize_project_deployer!, only: [:new, :create, :confirm, :buddy_check, :pending_start, :destroy]
+  skip_before_action :require_project, only: [:active, :active_count, :recent, :changeset]
 
+  before_action :authorize_project_deployer!, only: [:new, :create, :confirm, :buddy_check, :pending_start, :destroy]
   before_action :find_deploy, except: [:index, :recent, :active, :active_count, :new, :create, :confirm]
   before_action :stage, only: :new
 
   def index
-    @project = current_project
-    @deploys = @project.deploys.page(params[:page])
+    @deploys = current_project.deploys.page(params[:page])
 
     respond_to do |format|
       format.html
@@ -39,19 +39,17 @@ class DeploysController < ApplicationController
   end
 
   def new
-    @project = current_project
-    @deploy = @project.deploys.build(params.except(:project_id).permit(:stage_id, :reference))
+    @deploy = current_project.deploys.build(params.except(:project_id).permit(:stage_id, :reference))
   end
 
   def create
-    @project = current_project
     deploy_service = DeployService.new(current_user)
     @deploy = deploy_service.deploy!(stage, deploy_params)
 
     respond_to do |format|
       format.html do
         if @deploy.persisted?
-          redirect_to [@project, @deploy]
+          redirect_to [current_project, @deploy]
         else
           render :new
         end
@@ -64,37 +62,33 @@ class DeploysController < ApplicationController
   end
 
   def confirm
-    @project = current_project
     @changeset = Deploy.new(stage: stage, reference: reference).changeset
     render 'changeset', layout: false
   end
 
   def buddy_check
-    @project = current_project
     if @deploy.pending?
       @deploy.confirm_buddy!(current_user)
     end
 
-    redirect_to [@project, @deploy]
+    redirect_to [current_project, @deploy]
   end
 
   def pending_start
-    @project = current_project
     if @deploy.pending_non_production?
       @deploy.pending_start!
     end
 
-    redirect_to [@project, @deploy]
+    redirect_to [current_project, @deploy]
   end
 
   def show
-    @project = current_project
     respond_to do |format|
       format.html
       format.text do
         datetime = @deploy.updated_at.strftime "%Y%m%d_%H%M%Z"
         send_data @deploy.output,
-          filename: "#{@project.repo_name}-#{@deploy.stage.name.parameterize}-#{@deploy.id}-#{datetime}.log",
+          filename: "#{current_project.repo_name}-#{@deploy.stage.name.parameterize}-#{@deploy.id}-#{datetime}.log",
           type: 'text/plain'
       end
     end
@@ -108,14 +102,13 @@ class DeploysController < ApplicationController
   end
 
   def destroy
-    @project = current_project
     if @deploy.can_be_stopped_by?(current_user)
       DeployService.new(current_user).stop!(@deploy)
     else
       flash[:error] = "You do not have privileges to stop this deploy."
     end
 
-    redirect_to [@project, @deploy]
+    redirect_to [current_project, @deploy]
   end
 
   protected

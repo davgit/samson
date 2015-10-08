@@ -1,6 +1,8 @@
 class ProjectRolesController < ApplicationController
   include ProjectLevelAuthorization
 
+  skip_before_action :require_project, only: [:index]
+
   before_action :authorize_project_admin!, only: [:create, :update]
 
   def index
