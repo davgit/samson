@@ -24,9 +24,8 @@ class ProjectRolesController < ApplicationController
   end
 
   def update
-    project_role = UserProjectRole.update_user_role(params[:id], update_params)
-
-    if project_role.errors.empty?
+    project_role = UserProjectRole.find(params[:id])
+    if project_role.update(update_params)
       Rails.logger.info("#{current_user.name_and_email} granted the role of #{project_role.role.display_name} to #{project_role.user.name} on project #{current_project.name}")
       render status: :ok, json: project_role
     else

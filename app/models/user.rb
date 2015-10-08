@@ -60,11 +60,11 @@ class User < ActiveRecord::Base
   end
 
   def is_admin_for?(project)
-    user_project_roles.find_by(project: project).try(:is_project_admin?)
+    project_role_for(project).try(:is_project_admin?)
   end
 
   def is_deployer_for?(project)
-    user_project_roles.find_by(project: project).try(:is_project_deployer?)
+    project_role_for(project).try(:is_project_deployer?)
   end
 
   def project_role_for(project)

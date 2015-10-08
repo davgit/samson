@@ -1,5 +1,4 @@
 samson.service('projectRolesService', function($http, $q) {
-
   this.loadProjectRoles = function() {
     return $http.get('/project_roles');
   };
@@ -25,4 +24,3 @@ samson.service('projectRolesService', function($http, $q) {
     return $http.put('/projects/' + project_role.project_id + '/project_roles/' + project_role.id, payload);
   };
 });
-
