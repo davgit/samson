@@ -74,6 +74,8 @@ module Samson
     config.samson.docker.registry = ENV['DOCKER_REGISTRY'].presence
 
     config.samson.uri = URI(ENV["DEFAULT_URL"] || 'http://localhost:9080')
+    config.sse_rails_engine.access_control_allow_origin = config.samson.uri.to_s
+
     config.samson.stream_origin = ENV['STREAM_ORIGIN'].presence || config.samson.uri.to_s
     config.samson.deploy_origin = ENV['DEPLOY_ORIGIN'].presence || config.samson.uri.to_s
 
@@ -94,4 +96,3 @@ module Samson
 end
 
 require 'samson/hooks'
-require 'extensions/sse_cross_origin'
