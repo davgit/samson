@@ -73,7 +73,10 @@ module Samson
     config.samson.docker = ActiveSupport::OrderedOptions.new
     config.samson.docker.registry = ENV['DOCKER_REGISTRY'].presence
 
-    config.samson.uri = URI( ENV["DEFAULT_URL"] || 'http://localhost:3000' )
+    config.samson.uri = URI(ENV["DEFAULT_URL"] || 'http://localhost:9080')
+    config.samson.stream_origin = ENV['STREAM_ORIGIN'].presence || config.samson.uri.to_s
+    config.samson.deploy_origin = ENV['DEPLOY_ORIGIN'].presence || config.samson.uri.to_s
+
     self.default_url_options = {
       host: config.samson.uri.host,
       protocol: config.samson.uri.scheme
@@ -90,4 +93,5 @@ module Samson
   end
 end
 
-require "samson/hooks"
+require 'samson/hooks'
+require 'extensions/sse_cross_origin'
