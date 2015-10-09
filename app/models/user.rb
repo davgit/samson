@@ -65,7 +65,7 @@ class User < ActiveRecord::Base
   end
 
   def is_deployer_for?(project)
-    project_role_for(project).try(:is_deployer)
+    project_role_for(project).try(:is_deployer?)
   end
 
   def project_role_for(project)
